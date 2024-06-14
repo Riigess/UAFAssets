@@ -24,7 +24,7 @@ The DeviceName and TrainName fields should go in pairs. Mac/SunburstSeed, Mac/Gl
 # Special Thanks
 A few people that helped lead to the tracking effort. Their past research wouldn't have made this possible...besides Nicolas was looking to remove these assets from their repo anyways lol.
 - [@Nicolás17](https://github.com/nicolas17)
-- [@rootfs](https://github.com/R00tFS)
+- [@r00tfs](https://github.com/R00tFS)
 - [@dhinakg](https://github.com/dhinakg)
 
 And the salty person on the internet who called me an AI ~ [@Siguza](https://github.com/Siguza)
