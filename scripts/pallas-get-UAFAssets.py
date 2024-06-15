@@ -75,7 +75,7 @@ class OSTrainDevicePair(Enum):
 class AudienceLookups(Enum):
     macos_generic = "02d8e57e-dd1c-4090-aa50-b4ed2aef0062", OSTrainDevicePair.SunburstSeed, OSTrainDevicePair.SunburstBSeed, OSTrainDevicePair.SunburstCSeed, OSTrainDevicePair.SunburstDSeed, OSTrainDevicePair.SunburstESeed, OSTrainDevicePair.SunburstFSeed, OSTrainDevicePair.SunburstGSeed, OSTrainDevicePair.GlowSeed
     ios_generic = "0c88076f-c292-4dad-95e7-304db9d29d34", OSTrainDevicePair.DawnSeed, OSTrainDevicePair.DawnBSeed, OSTrainDevicePair.DawnCSeed, OSTrainDevicePair.DawnDSeed, OSTrainDevicePair.DawnESeed, OSTrainDevicePair.DawnFSeed, OSTrainDevicePair.DawnGSeed, OSTrainDevicePair.CrystalSeed
-    tvos_generic = "fe6f26f9-ec98-46d2-8faf-565375a83ba7", OSTrainDevicePair.Null
+    tvos_generic = "fe6f26f9-ec98-46d2-8faf-565375a83ba7", OSTrainDevicePair.Null # TODO: Needs a sysdiagnose for tvOS (Shipping & Prerelease)..
     visionpro_generic = "5cb41593-0f8a-45ba-89c6-52928b9caaae", OSTrainDevicePair.BorealisSeed, OSTrainDevicePair.BorealisESeed, OSTrainDevicePair.BorealisFSeed, OSTrainDevicePair.BorealisGSeed, OSTrainDevicePair.ConstellationSeed
     watchos_generic = "fe4c7f1c-f44c-4c00-b3df-eef225a1ac9d", OSTrainDevicePair.LighthouseBSeed, OSTrainDevicePair.LighthouseCSeed, OSTrainDevicePair.LighthouseDSeed, OSTrainDevicePair.LighthouseESeed, OSTrainDevicePair.LighthouseFSeed, OSTrainDevicePair.LighthouseGSeed, OSTrainDevicePair.LighthouseHSeed, OSTrainDevicePair.MoonstoneSeed, OSTrainDevicePair.MoonstoneBSeed, OSTrainDevicePair.MoonstoneBSeed, OSTrainDevicePair.MoonstoneCSeed, OSTrainDevicePair.MoonstoneDSeed, OSTrainDevicePair.MoonstoneESeed
 
@@ -123,7 +123,7 @@ class PallasRequest:
             "Host": "gdmf.apple.com",
             "Content-Length": str(len(body))
         }
-        headers.update(self.headers)
+        headers.update(self.headers) #Update with existing headers
 
         conn.request("POST", url_parts.path, body=body, headers=headers)
         resp = conn.getresponse()
@@ -134,7 +134,7 @@ class PallasRequest:
         conn.close()
         return to_return
     
-    def request(self, asset_audience:AudienceLookups, asset_type:Assets, device_type:DeviceType, train_name:OSTrainDevicePair, filename:str="pallas-response"):
+    def request(self, asset_audience:AudienceLookups, asset_type:Assets, device_type:DeviceType, train_name:OSTrainDevicePair) -> dict:
         body = {
             "AssetAudience": asset_audience.value[0], #This can be changed to fit other deviceTypes
             "ClientVersion": 2,
@@ -145,25 +145,31 @@ class PallasRequest:
         }
         body_dump = json.dumps(body)
 
-        headers = {
-            "Content-Type": "application/json"
-        }
-
         resp = self.make_post_request(body_dump)
-        with open(f'{filename}.json', 'w') as f:
-            if '{' in resp[0]:
-                if type(resp) is str:
-                    resp = json.loads(resp)
-                if type(resp) is dict:
-                    f.write(json.dumps(resp, indent=4, separators=(',',':')))
-                else:
-                    raise Exception(f"Error: unformatted type for resp {type(resp)}")
+        if '{' in resp[0]:
+            if type(resp) is str:
+                resp = json.loads(resp)
+            if type(resp) is dict:
+                return resp
             else:
-                raise Exception("Unhandled Data format")
+                raise Exception(f"Error: unformatted type for resp {type(resp)}")
+        else:
+            raise Exception("Unhandled Data format")
+    
+    def dump_json_to_file(self, data:dict, filename:str):
+        with open(filename, 'w') as f:
+            f.write(json.dumps(data, indent=4, separators=(',',':')))
+    
+    def remove_asset_receipts(self, data:dict) -> dict:
+        if 'Assets' in data:
+            for asset in data['Assets']:
+                if '_AssetReceipt' in asset:
+                    del asset['_AssetReceipt']
+        return data
 
 if __name__ == "__main__":
     pallas_url = 'https://gdmf.apple.com/v2/assets'
-    pallas_request = PallasRequest()
+    pallas_request = PallasRequest(url=pallas_url)
     sleep_time = 3
     
     def get_all_names_for_type(enum_type):
@@ -173,17 +179,12 @@ if __name__ == "__main__":
                 to_return.append(key)
         return to_return
 
-    def download_asset(audience, asset, device, ostrain, filename):
-        pallas_request.request(audience, asset, device, ostrain, filename=filename)
-        time.sleep(sleep_time)
-
     root_path = "UAFAssets/raw"
-    resume_from_exists = True
 
     audience = AudienceLookups.ios_generic
     device = DeviceType.iPhone
     # Only need to get A and E Trains for iPhone to get all asset info.
-    # - This is len(asset_audience) * len(os_trains) = ~50 requests over about 3 minutes
+    # - This is len(asset_audience) * len(os_trains) = ~50 requests over about 3 minutes (Not including how long it takes for Pallas to respond)
     asset_audiences = [Assets.__dict__[name] for name in get_all_names_for_type(Assets)]
     os_trains = [OSTrainDevicePair.DawnSeed, OSTrainDevicePair.DawnESeed, OSTrainDevicePair.CrystalSeed, OSTrainDevicePair.CrystalESeed]
 
@@ -193,8 +194,9 @@ if __name__ == "__main__":
                 os.mkdir(f"{root_path}/{ostrain.value[0]}")
             if not os.path.exists(f"{root_path}/{ostrain.value[0]}/{device.value}"):
                 os.mkdir(f"{root_path}/{ostrain.value[0]}/{device.value}")
-            if resume_from_exists:
-                if not os.path.exists(f"{root_path}/{ostrain.value[0]}/{device.value}/{asset.value}.json"):
-                    download_asset(audience, asset, device, ostrain, f"{root_path}/{ostrain.value[0]}/{device.value}/{asset.value}")
-            else:
-                download_asset(audience, asset, device, ostrain, f"{root_path}/{ostrain.value[0]}/{device.value}/{asset.value}")
+            resp = pallas_request.request(audience, asset, device, ostrain)
+            resp = pallas_request.remove_asset_receipts(resp)
+            #TODO: Reorganize data by directory tree
+            #TODO: Publish to Github through the API
+            pallas_request.dump_json_to_file(resp, f"{root_path}/{ostrain.value[0]}/{device.value}/{asset.value}")
+            time.sleep(sleep_time)
