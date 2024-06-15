@@ -1,3 +1,4 @@
 [submodule "UAFAssets-updater"]
 	path = UAFAssets-updater
 	url = github.com:riigess/UAFAssets-updater
+	branch = main
