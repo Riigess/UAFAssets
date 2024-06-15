@@ -164,30 +164,10 @@ class PallasRequest:
                 print("RESP:", resp)
                 raise Exception("Unhandled Data format")
 
-def standard_method(asset_audience:AudienceLookups, asset_type:Assets, device_type:DeviceType, train_name:OSTrainDevicePair, pallas_url:str="https://gdmf.apple.com/v2/assets") -> dict:
-    body = {
-        "AssetAudience": asset_audience.value[0],
-        "ClientVersion": 2,
-        "AssetType": asset_type.value,
-        "CertIssuanceDay":"2023-12-10",
-        "DeviceName": device_type.value,
-        "TrainName": train_name.value[0]
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    req = requests.post(pallas_url, headers=headers, data=json.dumps(body), verify=False)
-    if req.status_code == 200:
-        return req.json()
-    elif req.status_code == 404:
-        resp = base64.b64decode(req.text.split('.')[1]+'==').decode('utf-8')
-        return json.loads(resp)
-    elif req.status_code == 400 or req.status_code == 406:
-        raise Exception(f"Error in request ({req.status_code}) with body {json.dumps(body)}")
-
 if __name__ == "__main__":
     pallas_url = 'https://gdmf.apple.com/v2/assets'
     pallas_request = PallasRequest()
+    sleep_time = 3
     
     def get_all_names_for_type(enum_type):
         to_return = []
@@ -197,38 +177,27 @@ if __name__ == "__main__":
         return to_return
 
     def download_asset(audience, asset, device, ostrain, filename):
-        # request(audience, asset, device, ostrain, filename=f"{root_path}/{ostrain.value[0]}/{device.value}/{asset.value}")
         pallas_request.request(audience, asset, device, ostrain, filename=filename)
-        # For the Standard_method() function;
-        # resp_j = standard_method(audience, asset, device, ostrain)
-        # with open(f"{filename}.json", 'w') as f:
-        #     f.write(json.dumps(resp_j, indent=4, separators=(',',':')))
-
-    #I only need to get A and E Trains for iPhone to get all asset info, which is len(asset_audience) * len(os_trains) = ~50 requests over 3 minutes
-    audience_lookups = [AudienceLookups.ios_generic]
-    asset_audiences = [Assets.__dict__[name] for name in get_all_names_for_type(Assets)]
-    device_types = [DeviceType.iPhone]
-    os_trains = [OSTrainDevicePair.DawnSeed, OSTrainDevicePair.DawnESeed, OSTrainDevicePair.CrystalSeed, OSTrainDevicePair.CrystalESeed]
+        time.sleep(sleep_time)
 
     root_path = "UAFAssets/raw"
-    
     resume_from_exists = True
-    for audience in audience_lookups:
-        print("audience.value[-1]:", audience.value[1:])
-        for ostrain in audience.value[1:]:
-            print(ostrain, type(ostrain))
-            for device in ostrain.value[1:]:
-                for asset in asset_audiences:
-                    if not os.path.exists(f"{root_path}/{ostrain.value[0]}"):
-                        os.mkdir(f"{root_path}/{ostrain.value[0]}")
-                    if not os.path.exists(f"{root_path}/{ostrain.value[0]}/{device.value}"):
-                        os.mkdir(f"{root_path}/{ostrain.value[0]}/{device.value}")
-                    if resume_from_exists:
-                        if not os.path.exists(f"{root_path}/{ostrain.value[0]}/{device.value}/{asset.value}.json"):
-                            download_asset(audience, asset, device, ostrain, f"{root_path}/{ostrain.value[0]}/{device.value}/{asset.value}")
-                            time.sleep(3)
-                    else:
-                        download_asset(audience, asset, device, ostrain, f"{root_path}/{ostrain.value[0]}/{device.value}/{asset.value}")
-                        time.sleep(3)
 
-# curl -k -H 'Content-Type: application/json' https://gdmf.apple.com/v2/assets --data '{ "AssetAudience": "0c88076f-c292-4dad-95e7-304db9d29d34", "ClientVersion": 2, "AssetType": "com.apple.MobileAsset.CoreTextAssets","CertIssuanceDay": "2023-12-10" }' | cut -d. -f2 | tr _- /+ | base64 -d
+    audience = AudienceLookups.ios_generic
+    device = DeviceType.iPhone
+    # Only need to get A and E Trains for iPhone to get all asset info.
+    # - This is len(asset_audience) * len(os_trains) = ~50 requests over about 3 minutes
+    asset_audiences = [Assets.__dict__[name] for name in get_all_names_for_type(Assets)]
+    os_trains = [OSTrainDevicePair.DawnSeed, OSTrainDevicePair.DawnESeed, OSTrainDevicePair.CrystalSeed, OSTrainDevicePair.CrystalESeed]
+
+    for ostrain in os_trains:
+        for asset in asset_audiences:
+            if not os.path.exists(f"{root_path}/{ostrain.value[0]}"):
+                os.mkdir(f"{root_path}/{ostrain.value[0]}")
+            if not os.path.exists(f"{root_path}/{ostrain.value[0]}/{device.value}"):
+                os.mkdir(f"{root_path}/{ostrain.value[0]}/{device.value}")
+            if resume_from_exists:
+                if not os.path.exists(f"{root_path}/{ostrain.value[0]}/{device.value}/{asset.value}.json"):
+                    download_asset(audience, asset, device, ostrain, f"{root_path}/{ostrain.value[0]}/{device.value}/{asset.value}")
+            else:
+                download_asset(audience, asset, device, ostrain, f"{root_path}/{ostrain.value[0]}/{device.value}/{asset.value}")
