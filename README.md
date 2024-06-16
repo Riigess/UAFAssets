@@ -21,10 +21,12 @@ The AssetType can be changed, but should always start with "com.apple.MobileAsse
 The DeviceName and TrainName fields should go in pairs. Mac/SunburstSeed, Mac/GlowSeed, iPhone/DawnSeed, iPhone/CrystalSeed, "Apple Vision"/BorealisSeed, "Apple Vision"/ConstellationSeed, etc.
 
 
-# Special Thanks
-A few people that helped lead to the tracking effort. Their past research wouldn't have made this possible...besides Nicolas was looking to remove these assets from their repo anyways lol.
+# Thanks
 - [@Nicolás17](https://github.com/nicolas17)
+   - Provided past insights on [their repo](https://gitlab.com/nicolas17/pallas-archive)
 - [@r00tfs](https://github.com/R00tFS)
+    - Sanity checker
 - [@dhinakg](https://github.com/dhinakg)
-
-And the salty person on the internet who called me an AI ~ [@Siguza](https://github.com/Siguza)
+    - Sanity checker
+- [@Siguza](https://github.com/Siguza)
+    - For calling me ChatGPT, so I did the only sane thing and finished out the project... they're still going to call me an AI...
