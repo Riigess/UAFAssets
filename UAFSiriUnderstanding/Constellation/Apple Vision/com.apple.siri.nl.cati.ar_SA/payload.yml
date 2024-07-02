@@ -1,8 +1,8 @@
-ArchiveDecryptionKey: JHUkfW1f34K3O+90hd2oX/iRXj8h08vLizROU9oCwv0=
-ArchiveID: uf6kYYPq1ET7zlvEnCotOWHX/FytGqGVI4lhafEDi0U=
+ArchiveDecryptionKey: GIaKyS138UnEkTefbrRPSmMi5iui92+u/FSs02MFQSo=
+ArchiveID: JgHkyH812CZM8SSjSKFEuT74M3OEKhG3F8el8JHemss=
 AssetFormat: AppleArchive
-AssetVersion: 3304.2400.2023120401.12.1089,0
-Build: 12M1089
+AssetVersion: 3304.2400.2023120401.12.1311,0
+Build: 12M1311
 _PreSoftwareUpdateAssetStaging: true
-__BaseURL: https://updates.cdn-apple.com/2024/Iris/mobileassets/059-80942/09BBAA19-8D41-49AE-9ABB-FC4FE3E4FB68/
-__RelativePath: com_apple_MobileAsset_UAF_Siri_Understanding/ACBDDAB4-CA7E-41C5-B096-991F6B61BAF4.aar
+__BaseURL: https://updates.cdn-apple.com/2024/Iris/mobileassets/003-55204/33754DD2-D8B6-4A90-9903-8B57711E4C7D/
+__RelativePath: com_apple_MobileAsset_UAF_Siri_Understanding/EE9AC41D-5BA1-4D87-BB04-59CE18DC726F.aar
