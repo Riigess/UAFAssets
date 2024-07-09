@@ -1,8 +1,8 @@
-ArchiveDecryptionKey: 1w5MxFF3kcsAFNB/UDUopz5gXNhiV2c1m8ilBznnZBI=
-ArchiveID: 2pAV/7sUY8GFJGAHlKeAjmL83rbl7sb9gy2OSlU/Jz4=
+ArchiveDecryptionKey: 8jhCuuLs5rhe4YYzGKPIunueZ85ac80uYUxKZhMTTyE=
+ArchiveID: aTBdtrJtRMBPDqlP5T+DDEAy6z8x9zHO/HIleITV+lM=
 AssetFormat: AppleArchive
-AssetVersion: 3100.2400.27.13.100060,0
-Build: 13M100060
+AssetVersion: 3100.2400.29.13.300062,0
+Build: 13M300062
 _PreSoftwareUpdateAssetStaging: false
-__BaseURL: https://updates.cdn-apple.com/2024/Iris/mobileassets/003-72519/522E1A54-9B72-4CCA-8511-5566621DD261/
-__RelativePath: com_apple_MobileAsset_UAF_Siri_Understanding/4B5C9EF4-F561-4020-A9AE-EBFAF9A4D015.aar
+__BaseURL: https://updates.cdn-apple.com/2024/Iris/mobileassets/023-00904/603441D2-D354-4589-B898-CED23DDA75F8/
+__RelativePath: com_apple_MobileAsset_UAF_Siri_Understanding/247C8A28-B208-4A45-97D3-FC30F9A2D035.aar

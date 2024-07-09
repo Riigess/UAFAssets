@@ -1,8 +1,8 @@
-ArchiveDecryptionKey: +XNKkvnBp4LmNVrdv8JSvfd2Sepucxry8wc0Qwmfo2w=
-ArchiveID: CW85XorieWWaqWWJDqk3v2GHQiDYuQQEKdpv+eVrchg=
+ArchiveDecryptionKey: MOZ8eMPnO5ZQoM6in5DCY5B7lcAAeAZ1w1HFqmqbgyE=
+ArchiveID: cqAkNZ2ofxKs99F69RSLygQY6sFipRDqc+HmgGA3epo=
 AssetFormat: AppleArchive
-AssetVersion: 0.6.81407.13.200033,0
-Build: 13M200033
+AssetVersion: 0.7.81507.13.200061,0
+Build: 13M200061
 _PreSoftwareUpdateAssetStaging: true
-__BaseURL: https://updates.cdn-apple.com/2024/Iris/mobileassets/092-87363/EDFB01B0-F60A-451F-B559-2470DDE02AF5/
-__RelativePath: com_apple_MobileAsset_UAF_Handwriting_Synthesis/58A9CD75-DADB-47D1-BBF6-2931A681F03E.aar
+__BaseURL: https://updates.cdn-apple.com/2024/Iris/mobileassets/092-91333/1DF3991F-EDBB-4565-81E2-D558B72D20D7/
+__RelativePath: com_apple_MobileAsset_UAF_Handwriting_Synthesis/8895D592-0BD9-4867-996A-B89A672760B6.aar
