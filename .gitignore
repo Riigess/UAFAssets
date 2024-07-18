@@ -1,4 +1,7 @@
 raw/
+UAFAssets/
+UAFAssets.zip
+start.txt
 
 .pycache
 *.pyc
